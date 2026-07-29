@@ -1,0 +1,42 @@
+.audio-file-setting {
+  align-items: center;
+  line-height: 20px;
+  margin-bottom: 8px;
+}
+
+.audio-file-label {
+  min-width: 0;
+  padding: 4px 12px 4px 0;
+}
+
+.audio-file-name {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.6;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.audio-volume-setting {
+  align-items: center;
+}
+
+.audio-volume-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.audio-volume-slider {
+  width: 100px;
+  cursor: pointer;
+}
+
+.audio-volume-value {
+  min-width: 28px;
+  font-size: 13px;
+  text-align: right;
+}

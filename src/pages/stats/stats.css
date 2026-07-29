@@ -1,0 +1,341 @@
+:root {
+  --title-reader: #6b7280;
+  --title-seeker: #22c55e;
+  --title-wanderer: #3b82f6;
+  --title-awakened: #a855f7;
+  --title-celestial: #f59e0b;
+  --title-empyrean: #ec4899;
+  --title-singularity: #06b6d4;
+  --title-last-reader: #f97316;
+}
+
+.stats-page {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  z-index: 1000;
+  box-sizing: border-box;
+  padding: 40px 60px 60px 60px;
+}
+
+.stats-close-btn {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  z-index: 1001;
+  transition: background 0.2s;
+}
+
+.stats-close-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.stats-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  margin-top: 10px;
+}
+
+/* Activity visualizations are the page's primary content. */
+.stats-chart-wrapper,
+.stats-heatmap-wrapper {
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Cards ── */
+.stats-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 900px) {
+  .stats-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .stats-page {
+    padding: 40px 20px 60px 20px;
+  }
+}
+
+.stats-card {
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stats-card-icon {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+.stats-card-value {
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.stats-card-label {
+  font-size: 13px;
+  opacity: 0.6;
+  font-weight: 500;
+}
+
+/* ── Section titles ── */
+.stats-section-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  margin-top: 8px;
+}
+
+/* ── Heatmap ── */
+.stats-heatmap-wrapper {
+  --heatmap-cell-size: 13px;
+  --heatmap-gap: 3px;
+  --heatmap-side-width: 34px;
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 40px;
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.heatmap-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  min-width: 400px;
+}
+
+.heatmap-side {
+  width: var(--heatmap-side-width);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.heatmap-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.heatmap-month-spacer {
+  height: 17px;
+}
+
+.heatmap-grid {
+  display: flex;
+  gap: var(--heatmap-gap);
+  width: 100%;
+}
+
+.heatmap-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--heatmap-gap);
+  flex: 1;
+  min-width: 0;
+}
+
+.heatmap-cell {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 3px;
+  cursor: default;
+}
+
+.heatmap-months {
+  display: flex;
+  gap: var(--heatmap-gap);
+  width: 100%;
+}
+
+.heatmap-month-label {
+  font-size: 11px;
+  opacity: 0.55;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.heatmap-weekdays {
+  display: flex;
+  flex-direction: column;
+  gap: var(--heatmap-gap);
+  justify-content: flex-start;
+  flex: 1;
+}
+
+.heatmap-weekday-label {
+  font-size: 11px;
+  opacity: 0.55;
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+  font-size: 11px;
+  opacity: 0.55;
+  justify-content: flex-end;
+}
+
+.heatmap-legend-cell {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+}
+
+/* ── Chart ── */
+.stats-chart-wrapper {
+  border-radius: 16px;
+  padding: 30px;
+  margin-bottom: 40px;
+}
+
+.stats-chart-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.stats-chart-tab {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+/* ── Profile / Archive section ───────────────────────────────────────────── */
+
+.profile-section {
+  max-width: 480px;
+  margin-bottom: 48px;
+}
+
+.profile-divider {
+  border: none;
+  border-top: 1px solid;
+  margin: 20px 0;
+}
+
+.profile-title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  margin-bottom: 4px;
+}
+
+.profile-ascension {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  margin-bottom: 14px;
+}
+
+.profile-progress-track {
+  height: 3px;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.profile-progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.6s ease;
+}
+
+.title-reader { color: var(--title-reader); }
+.title-seeker { color: var(--title-seeker); }
+.title-wanderer { color: var(--title-wanderer); }
+.title-awakened { color: var(--title-awakened); }
+.title-celestial { color: var(--title-celestial); }
+.title-empyrean { color: var(--title-empyrean); }
+.title-singularity { color: var(--title-singularity); }
+.title-last-reader { color: var(--title-last-reader); }
+
+.profile-progress-fill.title-reader { background-color: var(--title-reader); }
+.profile-progress-fill.title-seeker { background-color: var(--title-seeker); }
+.profile-progress-fill.title-wanderer { background-color: var(--title-wanderer); }
+.profile-progress-fill.title-awakened { background-color: var(--title-awakened); }
+.profile-progress-fill.title-celestial { background-color: var(--title-celestial); }
+.profile-progress-fill.title-empyrean { background-color: var(--title-empyrean); }
+.profile-progress-fill.title-singularity { background-color: var(--title-singularity); }
+.profile-progress-fill.title-last-reader { background-color: var(--title-last-reader); }
+
+.profile-archive-fraction {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  opacity: 0.45;
+  margin-bottom: 4px;
+}
+
+.profile-archive-separator {
+  opacity: 0.4;
+}
+
+/* ── Stat rows ── */
+
+.profile-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.profile-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 7px 0;
+}
+
+.profile-stat-label {
+  font-size: 14px;
+  font-weight: 400;
+  /* opacity applied inline */
+}
+
+.profile-stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}

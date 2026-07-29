@@ -1,0 +1,89 @@
+/* ============================================
+   Phosphor Glow Theme for Koodo Reader
+   Slate/grey background + pink glow text
+   ============================================ */
+
+/* Base background — slate grey, not black */
+html, body, #root, #__next,
+.drawer, .drawer-content, .drawer-side {
+  background-color: #2d3138 !important;
+  color: #ff3399 !important;
+}
+
+/* All text gets the phosphor glow */
+* {
+  color: #ff3399 !important;
+  text-shadow: 0 0 2px rgba(255, 51, 153, 0.6), 0 0 6px rgba(255, 51, 153, 0.3);
+}
+
+/* Panels, menus, dropdowns, modals, toasts — known-safe selectors only */
+.menu, .dropdown-content, .modal-box, .toast, .alert,
+.collapse-title, .collapse-content, .drawer-side > * {
+  background-color: #25282e !important;
+  border: 1px solid rgba(255, 51, 153, 0.35) !important;
+  box-shadow: 0 0 12px rgba(255, 51, 153, 0.15) !important;
+}
+
+/* Buttons — no border/glow by default, only on hover/focus */
+.btn, button {
+  background-color: transparent !important;
+  border: 1px solid transparent !important;
+  color: #ff3399 !important;
+}
+.btn:hover, button:hover,
+.btn:focus, button:focus {
+  background-color: rgba(255, 51, 153, 0.12) !important;
+  border: 1px solid #ff3399 !important;
+  box-shadow: 0 0 14px rgba(255, 51, 153, 0.6) !important;
+}
+
+/* Inputs / search / textareas */
+input, textarea, select {
+  background-color: #25282e !important;
+  color: #ff3399 !important;
+  border: 1px solid rgba(255, 51, 153, 0.4) !important;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { background: #2d3138; width: 8px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 51, 153, 0.4);
+  box-shadow: 0 0 6px rgba(255, 51, 153, 0.6);
+}
+
+/* Book covers stay untouched — no tint, no glow */
+img { text-shadow: none !important; filter: none !important; }
+
+/* ============================================
+   Generic toggle switches
+   ============================================ */
+input[type="checkbox"] {
+  accent-color: #ff3399 !important;
+}
+
+[role="switch"] {
+  background-color: #25282e !important;
+  border: 1px solid #ff3399 !important;
+}
+
+[role="switch"][aria-checked="true"] {
+  background-color: #4d1a33 !important;
+  box-shadow: 0 0 8px rgba(255, 51, 153, 0.6) !important;
+}
+
+[role="switch"] > * {
+  background-color: #ff3399 !important;
+  box-shadow: 0 0 6px rgba(255, 51, 153, 0.8) !important;
+}
+
+/* ============================================
+   Active / selected states — sidebar items,
+   settings tabs, shelf highlight, etc.
+   ============================================ */
+[aria-selected="true"],
+.menu li.active, .menu li > *.active {
+  background-color: #4d1a33 !important;
+  color: #ff3399 !important;
+  box-shadow: inset 0 0 8px rgba(255, 51, 153, 0.4) !important;
+  border-left: 3px solid #ff3399 !important;
+}

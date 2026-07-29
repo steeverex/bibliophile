@@ -1,0 +1,7 @@
+.ripple-target { position: relative; overflow: hidden; isolation: isolate; }
+.ui-ripple { position: absolute; z-index: 10; width: 12px; height: 12px; border-radius: 50%; pointer-events: none; background: color-mix(in srgb, var(--color-theme-color) 60%, transparent); transform: translate(-50%, -50%) scale(0); animation: ui-ripple .16s ease-out forwards; }
+@keyframes ui-ripple { to { opacity: 0; transform: translate(-50%, -50%) scale(14); } }
+.progress-fill-updating { position: relative; overflow: hidden; }
+.progress-fill-updating::after { content: ""; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 20%, color-mix(in srgb, white 45%, transparent) 50%, transparent 80%); transform: translateX(-120%); animation: progress-shimmer 1.5s ease-in-out; }
+@keyframes progress-shimmer { to { transform: translateX(120%); } }
+@media (prefers-reduced-motion: reduce) { .ui-ripple, .progress-fill-updating::after { animation: none; display: none; } }

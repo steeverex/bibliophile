@@ -1,0 +1,108 @@
+.book-list-item-container {
+  margin: 12px;
+  margin-right: 25px;
+  position: relative;
+  cursor: grab;
+}
+.book-list-item-container:active {
+  cursor: grabbing;
+}
+.book-item-list-cover {
+  width: 43px;
+  /* height: 74px; */
+  opacity: 1;
+  cursor: pointer;
+  /* overflow: hidden; */
+  border-radius: 1px;
+  display: inline-block;
+  transition: transform .18s ease-out, box-shadow .18s ease-out;
+}
+.book-item-list-cover:hover { transform: scale(1.03); box-shadow: 0 6px 16px color-mix(in srgb, var(--color-theme-color) 28%, transparent); }
+@media (prefers-reduced-motion: reduce) { .book-item-list-cover { transition: none; } }
+
+.book-item-list-title {
+  display: inline-block;
+  width: calc(100% - 80px);
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  left: 60px;
+  cursor: pointer;
+}
+
+.book-item-list-author {
+  width: 150px;
+  float: right;
+  justify-content: flex-end;
+  text-align: right;
+  padding-left: 8px;
+}
+.book-item-list-percentage {
+  min-width: 64px;
+  float: right;
+  justify-content: flex-end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.book-item-list-subtitle,
+.book-item-list-author,
+.book-item-list-percentage {
+  height: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-height: 18px;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  padding-left: 10px;
+}
+.book-item-list-subtitle {
+  width: calc(100% - 250px);
+  float: left;
+}
+.book-item-list-new-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: #ff2e97;
+  background: rgba(255, 46, 151, 0.15);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.book-item-list-subtitle-text {
+  float: left;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book-item-list-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.book-item-list-favorite {
+  font-size: 14px;
+  color: rgb(231, 69, 69);
+  opacity: 0.8;
+}
+.book-item-list-top {
+  font-size: 14px;
+  opacity: 1;
+  color: #77a2da;
+}
+.book-item-list-config {
+  cursor: pointer;
+}
+.list-icon {
+  margin: 15px 10px;
+  font-size: 20px;
+}
