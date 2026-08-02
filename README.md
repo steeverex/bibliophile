@@ -82,6 +82,21 @@ Designed for long reading sessions.
 - Custom accent colors
 
 ---
+### 🎧 Ambient Reading Music
+
+Immerse yourself while reading with built-in ambient soundtracks.
+
+Choose from multiple environments including:
+
+- 🌧 Rain
+- 🌲 Forest
+- 🌊 Ocean
+- 🔥 Fireplace
+- ☕ Coffee Shop
+- 🌙 Night
+- 📚 Library Ambience
+
+Designed to help you focus and create the perfect reading atmosphere without leaving the app.
 
 ### ⚡ Fast
 
