@@ -6,7 +6,7 @@ import FontUtil from "../file/fontUtil";
 
 class styleUtil {
   // add default css for iframe
-  static addDefaultCss(bookKey: string, readerMode?: string) {
+  static addDefaultCss(bookKey: string) {
     let doc = getIframeDoc("ANY")[0];
     if (!doc) return;
     if (!doc.head) {
@@ -15,9 +15,9 @@ class styleUtil {
     //get style with id of default-style
     let styleElement = doc.getElementById("default-style");
     if (styleElement) {
-      styleElement.textContent = this.getDefaultCss(bookKey, readerMode);
+      styleElement.textContent = this.getDefaultCss(bookKey);
     } else {
-      let css = this.getDefaultCss(bookKey, readerMode);
+      let css = this.getDefaultCss(bookKey);
       let style = doc.createElement("style");
       style.id = "default-style";
       style.textContent = css;
@@ -42,9 +42,8 @@ class styleUtil {
     }
   }
   // get default css for iframe
-  static getDefaultCss(bookKey: string, readerMode?: string) {
-    const defaultCss = StyleHelper.getDefaultCss(ConfigService, bookKey);
-    return defaultCss;
+  static getDefaultCss(bookKey: string) {
+    return StyleHelper.getDefaultCss(ConfigService, bookKey);
   }
 
   static async applyReaderFonts(rendition: any): Promise<void> {

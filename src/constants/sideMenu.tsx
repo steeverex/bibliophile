@@ -5,6 +5,11 @@ export const sideMenu = [
     mode: "home",
   },
   {
+    name: "Shelves",
+    icon: "bookshelf-line",
+    mode: "shelves",
+  },
+  {
     name: "Favorites",
     icon: "heart",
     mode: "favorite",

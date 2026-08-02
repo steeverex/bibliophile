@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { MoreSettingProps, MoreSettingState } from "./interface";
 import toast from "react-hot-toast";
-import { TokenService } from "../../../assets/lib/kookit-extra-browser.min";
+import { ConfigService, TokenService } from "../../../assets/lib/kookit-extra-browser.min";
 import {
   clearProtection,
   getBiometricCapability,
@@ -16,6 +16,7 @@ import {
 } from "../../../utils/reader/protectionUtil";
 import { vexPasswordInputAsync, vexSelectAsync } from "../../../utils/common";
 import i18n from "../../../i18n";
+import { CSS_PRESETS } from "../../../constants/cssPresets";
 
 class MoreSetting extends React.Component<MoreSettingProps, MoreSettingState> {
   constructor(props: MoreSettingProps) {
@@ -27,6 +28,7 @@ class MoreSetting extends React.Component<MoreSettingProps, MoreSettingState> {
       pinValue: "",
       pinFirstValue: "",
       pinCallback: null,
+      confirmPreset: null,
     };
   }
 
@@ -285,7 +287,7 @@ class MoreSetting extends React.Component<MoreSettingProps, MoreSettingState> {
   }
 
   render() {
-    const { protectionMethod, biometricAvailable } = this.state;
+    const { protectionMethod, biometricAvailable, confirmPreset } = this.state;
     const isEnabled = !!protectionMethod;
     const showBiometricOption =
       biometricAvailable || protectionMethod === "biometric";
@@ -293,6 +295,8 @@ class MoreSetting extends React.Component<MoreSettingProps, MoreSettingState> {
     return (
       <>
         {this.renderPinKeypad()}
+
+        {/* ── Software protection ──────────────────────────────────────── */}
         <div className="setting-dialog-new-title" key="protection-toggle">
           <span style={{ width: "calc(100% - 100px)" }}>
             <Trans>Enable software protection</Trans>
@@ -353,6 +357,71 @@ class MoreSetting extends React.Component<MoreSettingProps, MoreSettingState> {
               )}
             </p>
           </>
+        )}
+
+        {/* ── CSS Theme Presets ─────────────────────────────────────────── */}
+        <div className="setting-dialog-new-title" style={{ marginTop: 10 }}>
+          <Trans>CSS Theme Presets</Trans>
+        </div>
+        <p className="setting-option-subtitle">
+          <Trans>
+            Load handcrafted CSS themes into the Custom CSS editor.
+          </Trans>
+        </p>
+        <ul className="css-preset-container">
+          {CSS_PRESETS.map((preset) => (
+            <li
+              key={preset.id}
+              className="css-preset-chip"
+              onClick={() => this.setState({ confirmPreset: preset })}
+            >
+              {preset.label}
+            </li>
+          ))}
+        </ul>
+
+        {/* ── Confirmation dialog ───────────────────────────────────────── */}
+        {confirmPreset && (
+          <div className="drag-background css-preset-overlay">
+            <div className="css-preset-dialog">
+              <p className="css-preset-dialog-message">
+                {this.props.t("Load preset")}{" "}
+                <strong>{confirmPreset.label}</strong>{" "}
+                {this.props.t("into Custom CSS?")}<br />
+                <span className="css-preset-dialog-sub">
+                  <Trans>This will replace the current Custom CSS.</Trans>
+                </span>
+              </p>
+              <div className="css-preset-dialog-actions">
+                <span
+                  className="add-dialog-cancel"
+                  onClick={() => this.setState({ confirmPreset: null })}
+                >
+                  <Trans>Cancel</Trans>
+                </span>
+                <span
+                  className="add-dialog-confirm"
+                  onClick={() => {
+                    // Write to ConfigService so AppearanceSetting reads it on mount
+                    ConfigService.setReaderConfig(
+                      "customSystemCSS",
+                      confirmPreset.css
+                    );
+                    ConfigService.setReaderConfig(
+                      "isCustomSystemCSS",
+                      "yes"
+                    );
+                    this.setState({ confirmPreset: null });
+                    // Switch to Appearance tab — AppearanceSetting will mount
+                    // fresh and seed its state from the values we just wrote.
+                    this.props.handleSettingMode("appearance");
+                  }}
+                >
+                  <Trans>Load</Trans>
+                </span>
+              </div>
+            </div>
+          </div>
         )}
       </>
     );

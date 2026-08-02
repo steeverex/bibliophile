@@ -26,6 +26,7 @@ import {
   clearDiscordPresence,
 } from "../../utils/reader/discordRPC";
 import SupportDialog from "../../components/dialogs/supportDialog";
+import LoadingScreen from "../../components/loadingScreen/component";
 import {
   READING_PANEL_TOGGLE_EVENT,
   MOUSE_POSITION_EVENT,
@@ -865,11 +866,12 @@ class Reader extends React.Component<ReaderProps, ReaderState> {
 
         {this.props.currentBook.key && <Viewer {...(renditionProps as any)} />}
         <div className={`reader-loading-screen${this.state.isContentReady ? " reader-loading-screen--ready" : ""}`} aria-hidden={this.state.isContentReady}>
-          <div className="reader-loading-content">
-            <div className="reader-loading-spinner" aria-hidden="true" />
-            <p className="reader-loading-label">Opening book</p>
-            <p className="reader-loading-title">{this.props.currentBook.name || "Preparing your reader"}</p>
-          </div>
+          <LoadingScreen
+            isReady={this.state.isContentReady}
+            bookName={this.props.currentBook.name || ""}
+            bookFormat={this.props.currentBook.format || ""}
+            percentage={this.props.percentage > 0 ? this.props.percentage : undefined}
+          />
         </div>
         {this.props.isConvertOpen && <ConvertDialog />}
         {this.props.isPdfCropOpen && <PdfCropDialog />}

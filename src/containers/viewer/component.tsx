@@ -411,7 +411,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
     ) {
       //ignore
     } else {
-      StyleUtil.addDefaultCss(this.props.currentBook.key, this.props.readerMode);
+      StyleUtil.addDefaultCss(this.props.currentBook.key);
       await StyleUtil.applyReaderFonts(rendition);
     }
 
@@ -506,7 +506,7 @@ class Viewer extends React.Component<ViewerProps, ViewerState> {
       ) {
         //ignore
       } else {
-        StyleUtil.addDefaultCss(this.props.currentBook.key, this.props.readerMode);
+        StyleUtil.addDefaultCss(this.props.currentBook.key);
         await StyleUtil.applyReaderFonts(rendition);
       }
       // rendition.tranformText();

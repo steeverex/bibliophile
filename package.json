@@ -81,6 +81,7 @@
     "electron": "^34.0.1",
     "electron-builder": "^26.0.12",
     "electron-rebuild": "^3.2.9",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "hard-source-webpack-plugin": "^0.13.1",
     "html-react-parser": "^5.1.10",
     "i18next": "^23.11.5",
@@ -241,7 +242,9 @@
       "target": [
         {
           "target": "dmg",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": "assets/icons/icon.icns",
@@ -252,7 +255,9 @@
       "target": [
         {
           "target": "nsis",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         },
         {
           "target": "zip",
@@ -267,7 +272,7 @@
           ]
         }
       ],
-      "icon": "assets/icons/icon.ico",
+      "icon": "C:\\\\Users\\\\tec-e\\\\Downloads\\\\icon.ico",
       "artifactName": "${productName}-${version}-${arch}-Win.${ext}"
     },
     "linux": {

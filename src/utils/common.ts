@@ -667,15 +667,16 @@ export const getPageWidth = (
     }px - ${width / 2}px)`;
     pageWidth = width;
   } else if (readerMode === "double") {
-    // The engine computes column-gap and column-width from page-area.clientWidth
-    // itself, so any valid multiple of 12 is correct — the spread always fills
-    // the container. Use the full available width minus margins, without any
-    // additional gutter deduction that would fight the engine's own layout.
     let width = findValidMultiple(
       document.body.clientWidth -
-        2 * margin
+        2 * margin -
+        80 -
+        (isNavLocked ? 300 : 0) -
+        (isSettingLocked ? 300 : 0)
     );
-    pageOffset = `calc(50vw - ${width / 2}px)`;
+    pageOffset = `calc(50vw + ${isNavLocked ? 150 : 0}px - ${
+      isSettingLocked ? 150 : 0
+    }px - ${width / 2}px)`;
     pageWidth = width;
   }
   if (pageWidth > document.body.clientWidth) {

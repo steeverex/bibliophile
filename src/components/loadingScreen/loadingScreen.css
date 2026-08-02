@@ -1,0 +1,495 @@
+/*
+ * LoadingScreen — CRT terminal archive boot sequence
+ *
+ * Layout:
+ *   .ls                      fixed full-screen backdrop
+ *   .ls__crt                 passive CRT effect layers (no pointer events)
+ *     .ls__crt-vignette      multiply — corner darkening
+ *     .ls__crt-scanlines     multiply — horizontal phosphor band separation
+ *     .ls__crt-grain         overlay  — animated aperiodic film noise
+ *     .ls__crt-flicker       screen   — phosphor warm-up brightness pulse
+ *   .ls__terminal            centered card — the "screen within the screen"
+ *     .ls__terminal-header   traffic-light dots + title bar
+ *     .ls__log               scrolling message area
+ *       .ls__log-line        base message row
+ *       .ls__log-line--syslog  [ OK ] green system log
+ *       .ls__log-line--easter  ✦ easter egg, italic pink
+ *       .ls__log-line--active  current in-progress line
+ *     .ls__prompt            > character
+ *     .ls__cursor            ▮ blinking block cursor
+ *     .ls__bar-container     BIOS-style progress bar wrapper
+ *       .ls__bar-label       percentage or LOADING text
+ *       .ls__bar-track       bar background
+ *         .ls__bar-fill      progress fill
+ *       .ls__bar-bracket-*   [ ] bracket decorations
+ *     .ls__book-title        archive + book name footer
+ *
+ * Fade-out: .ls--ready sets opacity:0 + pointer-events:none
+ */
+
+/* ─── Design tokens ──────────────────────────────────────────────────────────
+   All colours and measurements live here so the whole skin is tunable in
+   one place without touching individual rules.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.ls {
+  --ls-bg:           #1a1a1e;
+  --ls-card-bg:      #111116;
+  --ls-card-border:  #2e1f2e;
+  --ls-pink:         #ff2d97;
+  --ls-pink-dim:     #a81a61;
+  --ls-pink-glow:    rgba(255, 45, 151, 0.45);
+  --ls-green:        #7fffb0;
+  --ls-green-dim:    rgba(127, 255, 176, 0.65);
+  --ls-text:         #e8dfe8;
+  --ls-text-dim:     #8a7a8a;
+  --ls-font:         'Courier New', Courier, 'Lucida Console', monospace;
+  --ls-font-size:    13px;
+  --ls-line-height:  1.65;
+  --ls-radius:       3px;
+}
+
+/* ─── Root backdrop ──────────────────────────────────────────────────────────*/
+
+.ls {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--ls-bg);
+  opacity: 1;
+  pointer-events: auto;
+  /* Fade out when isReady — no transform so underlying content is undisturbed */
+  transition: opacity 0.35s ease;
+}
+
+.ls--ready {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ─── CRT effect layer container ─────────────────────────────────────────────
+   Fixed, inset-0, z-index above the backdrop but below the terminal card.
+   contain:paint keeps all blend-mode work inside this element's own layer.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.ls__crt {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  contain: paint;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.ls__crt > span {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Vignette: multiply blends dark edges onto the charcoal background.
+   Center is white (neutral for multiply) → edges are dark. */
+.ls__crt-vignette {
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(255, 255, 255, 0)   48%,
+    rgba(0,   0,   0,   0.6) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Scanlines: 1px dark / 3px white gap. multiply blend — dark lines darken
+   only the already-dark background; the pale terminal card text is unaffected
+   because the card sits above this layer in the stacking context. */
+.ls__crt-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.55) 0px,
+    rgba(0, 0, 0, 0.55) 1px,
+    rgba(255, 255, 255, 1) 1px,
+    rgba(255, 255, 255, 1) 4px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.11;
+}
+
+/* Grain: two-tile SVG feTurbulence, animated position shift for film motion.
+   overlay blend brightens highlights and darkens shadows — how noise behaves
+   on real analog media. Steps(1) = hard frame cuts, not a smooth slide. */
+.ls__crt-grain {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.74' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.69' numOctaves='4' seed='11' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  mix-blend-mode: overlay;
+  opacity: 0.07;
+  animation: ls-grain-shift 0.85s steps(1) infinite;
+}
+
+/* Flicker: screen blend brightens the backdrop slightly on every other frame,
+   emulating a phosphor tube warming up or an unstable mains supply. */
+.ls__crt-flicker {
+  background: rgba(255, 45, 151, 0.03);
+  mix-blend-mode: screen;
+  animation: ls-flicker 4.3s steps(2, end) infinite;
+}
+
+/* ─── Terminal card ──────────────────────────────────────────────────────────
+   z-index: 2 — above the CRT layer so scanlines don't cross the text area.
+   The card has its own scanline-light texture via a repeating-linear-gradient
+   background — faint enough to be subliminal, strong enough to feel CRT.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.ls__terminal {
+  position: relative;
+  z-index: 2;
+  width: min(680px, 88vw);
+  background-color: var(--ls-card-bg);
+  border: 1px solid var(--ls-card-border);
+  border-radius: var(--ls-radius);
+  box-shadow:
+    0 0 0 1px rgba(255, 45, 151, 0.08),
+    0 0 40px rgba(255, 45, 151, 0.12),
+    0 0 80px rgba(255, 45, 151, 0.05),
+    inset 0 0 60px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  /* Subtle internal scanline texture — finer pitch than the full-screen layer */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 3px
+  );
+}
+
+/* ─── Header bar ─────────────────────────────────────────────────────────────*/
+
+.ls__terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 14px;
+  background-color: rgba(255, 45, 151, 0.07);
+  border-bottom: 1px solid var(--ls-card-border);
+}
+
+/* Traffic-light dots — purely decorative, signal "this is a window" */
+.ls__terminal-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ls__terminal-dot--red    { background: #ff5f57; box-shadow: 0 0 4px rgba(255, 95, 87,  0.6); }
+.ls__terminal-dot--yellow { background: #febc2e; box-shadow: 0 0 4px rgba(254, 188, 46, 0.6); }
+.ls__terminal-dot--green  { background: #28c840; box-shadow: 0 0 4px rgba(40,  200, 64, 0.6); }
+
+.ls__terminal-title {
+  margin-left: 6px;
+  font-family: var(--ls-font);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--ls-pink-dim);
+  text-transform: uppercase;
+  /* Phosphor glow on the title text */
+  text-shadow: 0 0 8px var(--ls-pink-glow);
+  user-select: none;
+}
+
+/* ─── Log area ───────────────────────────────────────────────────────────────*/
+
+.ls__log {
+  padding: 18px 20px 10px;
+  min-height: 220px;
+  max-height: 260px;
+  overflow: hidden;           /* no scrollbar — old lines slide off the top */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;  /* new lines push in from the bottom */
+  gap: 2px;
+}
+
+.ls__log-line {
+  font-family: var(--ls-font);
+  font-size: var(--ls-font-size);
+  line-height: var(--ls-line-height);
+  color: var(--ls-text);
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: clip;
+  /* Each new committed line fades in very briefly */
+  animation: ls-line-appear 0.12s ease-out both;
+}
+
+/* Dim out older lines so the active line reads as current */
+.ls__log-line:not(:last-child):not(.ls__log-line--active) {
+  opacity: 0.55;
+}
+
+/* [ OK ] system log lines — phosphor green */
+.ls__log-line--syslog {
+  color: var(--ls-green);
+  opacity: 0.8 !important;
+  text-shadow: 0 0 6px rgba(127, 255, 176, 0.4);
+  letter-spacing: 0.02em;
+}
+
+/* Easter egg — italic hot pink, full brightness, slightly larger glow */
+.ls__log-line--easter {
+  color: var(--ls-pink);
+  font-style: italic;
+  opacity: 1 !important;
+  text-shadow:
+    0 0 6px var(--ls-pink-glow),
+    0 0 14px rgba(255, 45, 151, 0.25);
+  letter-spacing: 0.04em;
+}
+
+/* Active / in-progress line — full brightness, pink prompt */
+.ls__log-line--active {
+  opacity: 1 !important;
+  color: var(--ls-text);
+}
+
+/* ─── Prompt character ───────────────────────────────────────────────────────*/
+
+.ls__prompt {
+  color: var(--ls-pink);
+  text-shadow: 0 0 6px var(--ls-pink-glow);
+  user-select: none;
+}
+
+/* ─── Block cursor ───────────────────────────────────────────────────────────
+   Uses steps(2) blink — hard on/off like a real terminal, not a CSS fade.
+   The character ▮ is already in the DOM; we animate its visibility only.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.ls__cursor {
+  color: var(--ls-pink);
+  text-shadow: 0 0 8px var(--ls-pink-glow);
+  display: inline-block;
+  animation: ls-cursor-blink 1.1s steps(2, start) infinite;
+  user-select: none;
+}
+
+/* ─── Progress bar ───────────────────────────────────────────────────────────
+   BIOS-style layout:
+     [ ████████████░░░░░░ ]  42%
+   Bracket glyphs are positioned absolutely at the sides of the track so they
+   never shift when the percentage label changes width.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.ls__bar-container {
+  position: relative;
+  margin: 8px 20px 0;
+  padding: 0 14px;            /* leaves room for the [ ] bracket chars */
+}
+
+.ls__bar-label {
+  font-family: var(--ls-font);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--ls-text-dim);
+  text-align: right;
+  margin-bottom: 5px;
+  height: 16px;
+}
+
+.ls__bar-label--indeterminate {
+  animation: ls-text-pulse 2.1s ease-in-out infinite;
+}
+
+.ls__bar-track {
+  width: 100%;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 45, 151, 0.22);
+  border-radius: 1px;
+  overflow: hidden;
+  position: relative;
+}
+
+.ls__bar-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--ls-pink-dim) 0%,
+    var(--ls-pink)     60%,
+    #ff9de0            100%
+  );
+  box-shadow: 0 0 8px var(--ls-pink-glow);
+  border-radius: 1px;
+  transition: width 0.25s linear;
+  /* Scanline texture inside the bar — faint horizontal lines over the fill */
+  background-image:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0, 0, 0, 0.18) 3px,
+      rgba(0, 0, 0, 0.18) 4px
+    ),
+    linear-gradient(
+      90deg,
+      var(--ls-pink-dim) 0%,
+      var(--ls-pink)     60%,
+      #ff9de0            100%
+    );
+}
+
+/*
+ * Indeterminate fill: a bright segment that slides back and forth using the
+ * --ls-bar-phase custom property set by the component's JS (sine wave, 0–100).
+ * The segment is always 40% wide; its left edge is at --ls-bar-phase * 0.6
+ * so the right edge never exceeds 100%.
+ */
+.ls__bar-fill--indeterminate {
+  width: 40% !important;
+  transform: translateX(calc(var(--ls-bar-phase, 0%) * 0.6));
+  transition: transform 0.03s linear;
+}
+
+/* [ ] bracket decorators on the sides of the bar */
+.ls__bar-bracket-left,
+.ls__bar-bracket-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--ls-font);
+  font-size: 16px;
+  line-height: 1;
+  color: var(--ls-pink-dim);
+  text-shadow: 0 0 6px var(--ls-pink-glow);
+  margin-top: 8px;             /* align with track center (label above + track height) */
+  user-select: none;
+}
+
+.ls__bar-bracket-left  { left:  2px; }
+.ls__bar-bracket-right { right: 2px; }
+
+/* ─── Book title footer ───────────────────────────────────────────────────────*/
+
+.ls__book-title {
+  padding: 12px 20px 18px;
+  font-family: var(--ls-font);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-top: 1px solid rgba(255, 45, 151, 0.08);
+  margin-top: 12px;
+}
+
+.ls__book-label {
+  color: var(--ls-pink-dim);
+  text-shadow: 0 0 6px var(--ls-pink-glow);
+}
+
+.ls__book-name {
+  color: var(--ls-text-dim);
+}
+
+/* ─── Keyframe animations ────────────────────────────────────────────────────*/
+
+/*
+ * Grain shift: two background layers move at different speeds so their
+ * combined noise pattern is always different. steps(1) = hard frame cuts.
+ */
+@keyframes ls-grain-shift {
+  0%   { background-position:   0px    0px,    0px    0px; }
+  14%  { background-position: -61px   37px,   22px  -53px; }
+  28%  { background-position:  44px  -71px,  -68px   31px; }
+  42%  { background-position: -83px   18px,   57px  -14px; }
+  57%  { background-position:  29px   91px,  -38px   72px; }
+  71%  { background-position: -49px  -27px,   88px  -61px; }
+  85%  { background-position:  72px   48px,  -21px   83px; }
+  100% { background-position:   0px    0px,    0px    0px; }
+}
+
+/*
+ * Flicker: very slow, very subtle. steps(2, end) = only two opacity states,
+ * which makes it feel like an electrical fluctuation rather than a smooth dim.
+ */
+@keyframes ls-flicker {
+  0%,  100% { opacity: 0.0; }
+  48%       { opacity: 1.0; }
+  52%       { opacity: 0.5; }
+}
+
+/*
+ * Cursor blink: steps(2, start) = hard on/off. The period is 1.1s (slightly
+ * off the common 1s) so it doesn't sync with any other animation on the page.
+ */
+@keyframes ls-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+
+/*
+ * Line appear: each committed line fades+slides in from slightly below.
+ * Very short (120ms) so it doesn't slow down reading the sequence.
+ */
+@keyframes ls-line-appear {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * Bar label pulse: the "LOADING" text breathes slowly while indeterminate.
+ */
+@keyframes ls-text-pulse {
+  0%,  100% { opacity: 0.4; }
+  50%       { opacity: 0.9; }
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────────
+   Under prefers-reduced-motion:
+   - All animations disabled
+   - Cursor becomes a static underline character
+   - Fade-out transition is instant
+   - Grain and flicker layers hidden entirely
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .ls {
+    transition: none;
+  }
+  .ls__crt-grain,
+  .ls__crt-flicker {
+    display: none;
+  }
+  .ls__crt-scanlines {
+    animation: none;
+  }
+  .ls__cursor {
+    animation: none;
+    opacity: 1;
+  }
+  .ls__log-line {
+    animation: none;
+  }
+  .ls__bar-label--indeterminate {
+    animation: none;
+    opacity: 0.7;
+  }
+  .ls__bar-fill--indeterminate {
+    /* Static wide fill at center when no motion allowed */
+    width: 60% !important;
+    transform: translateX(20%);
+    transition: none;
+  }
+}

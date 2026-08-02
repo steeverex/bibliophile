@@ -5,7 +5,6 @@ import {
   handleCollapse,
   handleSelectBook,
   handleShelf,
-  handleSortShelfDialog,
 } from "../../store/actions";
 import { handleFetchBooks } from "../../store/actions/manager";
 import { connect } from "react-redux";
@@ -18,8 +17,6 @@ const mapStateToProps = (state: stateType) => {
   return {
     mode: state.sidebar.mode,
     isCollapsed: state.sidebar.isCollapsed,
-    shelfTitle: state.sidebar.shelfTitle,
-    isOpenSortShelfDialog: state.backupPage.isOpenSortShelfDialog,
   };
 };
 const actionCreator = {
@@ -29,7 +26,6 @@ const actionCreator = {
   handleCollapse,
   handleSelectBook,
   handleShelf,
-  handleSortShelfDialog,
   handleFetchBooks,
 };
 

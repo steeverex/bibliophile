@@ -7,7 +7,6 @@ import { Provider } from "react-redux";
 import "./i18n";
 import store from "./store";
 import Router from "./router/index";
-import VisualEffects from "./components/visualEffects/component";
 import StyleUtil from "./utils/reader/styleUtil";
 import {
   initSystemFont,
@@ -36,7 +35,6 @@ ReactDOM.render(
   <Provider store={store}>
     <>
       <Router />
-      <VisualEffects />
     </>
   </Provider>,
   container

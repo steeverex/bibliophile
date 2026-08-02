@@ -7,6 +7,7 @@ import { ReactSortable } from "react-sortablejs";
 import { ConfigService } from "../../../assets/lib/kookit-extra-browser.min";
 import toast from "react-hot-toast";
 import DeletePopup from "../deletePopup";
+import ShelfCoverUtil from "../../../utils/file/shelfCoverUtil";
 class SortShelfDialog extends React.Component<
   SortShelfDialogProps,
   SortShelfDialogState
@@ -38,7 +39,7 @@ class SortShelfDialog extends React.Component<
   handleClose = () => {
     this.props.handleSortShelfDialog(false);
   };
-  handleRenameShelf = () => {
+  handleRenameShelf = async () => {
     if (!this.state.newShelfName) {
       toast(this.props.t("Shelf Title is Empty"));
       this.setState({ currentEditShelf: "", newShelfName: "" });
@@ -70,14 +71,16 @@ class SortShelfDialog extends React.Component<
       shelfItemList,
       "shelfList"
     );
+    await ShelfCoverUtil.rename(this.state.currentEditShelf, this.state.newShelfName);
     toast.success(this.props.t("Renamed successfully"));
     this.setState({ currentEditShelf: "", newShelfName: "" });
   };
-  handleDeleteShelf = () => {
+  handleDeleteShelf = async () => {
     if (!this.state.currentDeleteShelf) return;
     let currentShelfTitle = this.state.currentDeleteShelf;
     ConfigService.deleteMapConfig(currentShelfTitle, "shelfList");
     ConfigService.deleteListConfig(currentShelfTitle, "sortedShelfList");
+    await ShelfCoverUtil.remove(currentShelfTitle);
 
     this.props.handleShelf("");
     let sortedShelfList =

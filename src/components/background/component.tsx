@@ -99,8 +99,8 @@ class Background extends React.Component<BackgroundProps, BackgroundState> {
                   boxShadow: "0 0 0px rgba(191, 191, 191, 1)",
                 }
               : {
-                  left: 5,
-                  right: 5,
+                  left: this.props.isNavLocked ? 305 : 5,
+                  right: this.props.isSettingLocked ? 305 : 5,
                 }
           }
         ></div>
@@ -115,8 +115,8 @@ class Background extends React.Component<BackgroundProps, BackgroundState> {
                   width: `calc(${this.state.pageWidth} + 100px)`,
                 }
               : {
-                  left: 7,
-                  right: 7,
+                  left: this.props.isNavLocked ? 307 : 7,
+                  right: this.props.isSettingLocked ? 307 : 7,
                 }
           }
         >
@@ -176,8 +176,8 @@ class Background extends React.Component<BackgroundProps, BackgroundState> {
                     : {}),
                 }
               : {
-                  left: 9,
-                  right: 9,
+                  left: this.props.isNavLocked ? 309 : 9,
+                  right: this.props.isSettingLocked ? 309 : 9,
                   ...(this.state.readerBackgroundUrl
                     ? {
                         backgroundImage: `url("${this.state.readerBackgroundUrl}")`,

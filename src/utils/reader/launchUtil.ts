@@ -44,9 +44,13 @@ export const initTheme = () => {
     if (isNight) {
     }
   }
-  // Migrate the removed appearance preset without leaving an invalid skin value.
-  if (ConfigService.getReaderConfig("appSkin") === "phosphor") {
-    ConfigService.setReaderConfig("appSkin", "night");
+  // "phosphor" was a custom skin that no longer exists — reset to system default
+  // so the app follows OS appearance instead of staying locked to night mode.
+  if (
+    ConfigService.getReaderConfig("appSkin") === "phosphor" ||
+    ConfigService.getReaderConfig("appSkin") === "night-phosphor"
+  ) {
+    ConfigService.setReaderConfig("appSkin", "system");
   }
   syncNativeThemeSource(ConfigService.getReaderConfig("appSkin"));
 
