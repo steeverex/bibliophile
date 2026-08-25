@@ -1,10 +1,11 @@
 .book-list-container-parent {
   position: absolute;
   top: 80px;
-  left: 220px;
-  width: calc(100% - 220px);
+  left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
   height: calc(100% - 125px);
   overflow: visible;
+  transition: left 0.25s ease, width 0.25s ease;
 }
 .book-list-header {
   display: flex;
@@ -12,8 +13,9 @@
   justify-content: space-between;
   position: absolute;
   bottom: 0px;
-  left: 220px;
-  width: calc(100% - 220px);
+  left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  transition: left 0.25s ease, width 0.25s ease;
 }
 .book-list-header-right {
   display: flex;

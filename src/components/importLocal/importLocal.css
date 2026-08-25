@@ -32,7 +32,7 @@
 .drag-section {
   position: absolute;
   top: 75px;
-  width: calc(100% - 200px);
+  width: calc(100% - var(--sidebar-width));
   height: calc(100vh - 90px);
   display: flex;
   align-items: center;

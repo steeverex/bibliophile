@@ -1,8 +1,9 @@
 .header {
-  width: 100%;
+  width: calc(100% - var(--sidebar-width));
   height: 80px;
   overflow: hidden;
-  margin-left: 190px;
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.25s ease;
 }
 
 .setting-icon-container:hover {

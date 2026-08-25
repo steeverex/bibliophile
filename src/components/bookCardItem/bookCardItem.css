@@ -175,6 +175,6 @@
 .action-dialog-parent {
   position: fixed;
   top: 0px;
-  left: 200px;
+  left: var(--sidebar-width);
   z-index: 10;
 }

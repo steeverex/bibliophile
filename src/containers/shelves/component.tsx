@@ -136,11 +136,7 @@ class ShelvesPage extends React.Component<ShelvesPageProps, ShelvesPageState> {
   render() {
     const shelves = this.getShelves();
     return (
-      <main
-        className="shelves-page"
-        onClick={() => this.closeContextMenu()}
-        style={this.props.isCollapsed ? { left: 70, width: "calc(100vw - 70px)" } : {}}
-      >
+      <main className="shelves-page" onClick={() => this.closeContextMenu()}>
         <header className="shelves-page-header">
           <div>
             <p className="shelves-page-kicker">COLLECTION_INDEX</p>

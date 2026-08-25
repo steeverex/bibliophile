@@ -102,14 +102,7 @@ class BookList extends React.Component<BookListProps, BookListState> {
     return (
       <>
         {this.state.fullBooksData.length > 0 ? (
-          <div
-            className="book-list-container-parent"
-            style={
-              this.props.isCollapsed
-                ? { width: "calc(100vw - 70px)", left: "70px" }
-                : {}
-            }
-          >
+          <div className="book-list-container-parent">
             <div className="book-list-container">
               <ul className="book-list-item-box">{this.renderBookList()}</ul>
             </div>
@@ -118,14 +111,7 @@ class BookList extends React.Component<BookListProps, BookListState> {
           <EmptyPage />
         )}
         {this.state.fullBooksData.length > 0 ? (
-          <div
-            className="book-list-header"
-            style={
-              this.props.isCollapsed
-                ? { width: "calc(100% - 70px)", left: "70px" }
-                : {}
-            }
-          >
+          <div className="book-list-header">
             <div></div>
             <div
               className="booklist-delete-container"

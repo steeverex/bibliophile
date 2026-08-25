@@ -9,7 +9,6 @@ import {
   TokenService,
   KOReaderUtil,
 } from "../../assets/lib/kookit-extra-browser.min";
-import UpdateInfo from "../../components/dialogs/updateDialog";
 import { generateSnapshot } from "../../utils/file/backup";
 import { isElectron } from "react-device-detect";
 import {
@@ -26,7 +25,6 @@ import DatabaseService from "../../utils/storage/databaseService";
 import CoverUtil from "../../utils/file/coverUtil";
 import BookUtil from "../../utils/file/bookUtil";
 import {
-  addChatBox,
   checkBrokenDatabase,
   checkMissingBook,
   generateSyncRecord,
@@ -48,7 +46,6 @@ import { LocalFileManager } from "../../utils/file/localFile";
 import packageJson from "../../../package.json";
 import { getTempToken, updateUserConfig } from "../../utils/request/user";
 import i18n from "../../i18n";
-import { getNotification } from "../../utils/request/common";
 import audioManager from "../../utils/audio/audioManager";
 declare var window: any;
 
@@ -295,23 +292,6 @@ class Header extends React.Component<HeaderProps, HeaderState> {
     _nextContext: any
   ) {
     if (nextProps.isAuthed && nextProps.isAuthed !== this.props.isAuthed) {
-      if (isElectron) {
-        if (ConfigService.getReaderConfig("isAllowNotification") === "yes") {
-          getNotification().then((res) => {
-            if (
-              res.data &&
-              res.data.result === "ok" &&
-              res.data.unread &&
-              res.data.unread > 0
-            ) {
-              this.setState({ notificationCount: res.data.unread });
-              ConfigService.setReaderConfig("isAllowNotification", "no");
-            }
-          });
-        }
-      } else {
-        addChatBox();
-      }
       if (ConfigService.getReaderConfig("isProUpgraded") !== "yes") {
         try {
           ConfigService.setReaderConfig("isProUpgraded", "yes");
@@ -725,10 +705,7 @@ class Header extends React.Component<HeaderProps, HeaderState> {
 
   render() {
     return (
-      <div
-        className="header"
-        style={this.props.isCollapsed ? { marginLeft: "40px" } : {}}
-      >
+      <div className="header">
         {isElectron && this.props.isAuthed && (
           <div
             className="header-chat-widget"
@@ -955,7 +932,6 @@ class Header extends React.Component<HeaderProps, HeaderState> {
           } as any)}
         />
         <SupportDialog />
-        <UpdateInfo />
       </div>
     );
   }

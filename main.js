@@ -19,8 +19,14 @@ const Store = require("electron-store");
 const log = require("electron-log/main");
 const os = require("os");
 const { execFile } = require("child_process");
-const store = new Store();
 const fs = require("fs");
+
+// Keep all Bibliophile application data in its dedicated roaming-data folder.
+// This must run before electron-store is created because it resolves its path
+// from Electron's userData location.
+const DEFAULT_STORAGE_ROOT = "C:\\Users\\tec-e\\AppData\\Roaming\\Bibliophile";
+app.setPath("userData", DEFAULT_STORAGE_ROOT);
+const store = new Store();
 
 // Development launchers can detach their stdout/stderr pipes while Electron is
 // still alive. Ignore only the resulting broken-pipe error; all other stream
@@ -36,6 +42,11 @@ process.stderr.on("error", handleConsoleStreamError);
 
 const configDir = app.getPath("userData");
 const dirPath = path.join(configDir, "uploads");
+const defaultStoragePath = path.join(dirPath, "data");
+
+// Preserve the existing upload/data structure while ensuring it exists for a
+// first-run installation.
+fs.mkdirSync(defaultStoragePath, { recursive: true });
 const packageJson = require("./package.json");
 let mainWin;
 let tray = null;
@@ -53,7 +64,6 @@ let chatWindow;
 let dbConnection = {};
 let syncUtilCache = {};
 let pickerUtilCache = {};
-let downloadRequest = null;
 
 const RESIZE_THROTTLE_MS = 300;
 
@@ -906,8 +916,13 @@ const createMainWin = () => {
   }
   // Keep the main window hidden until Electron has painted the first renderer frame.
   // Do not add this to the shared `options` object: reader windows reuse it.
-  mainWin = new BrowserWindow({ ...options, show: false });
-  if (store.get("isAlwaysOnTop") === "yes") {
+
+mainWin = new BrowserWindow({
+  ...options,
+ show: false,
+icon: path.join(__dirname, "assets", "icons", "bibliophile.ico"),
+});
+if (store.get("isAlwaysOnTop") === "yes") {
     mainWin.setAlwaysOnTop(true);
   }
   if (store.get("isAutoMaximizeWin") === "yes") {
@@ -993,17 +1008,6 @@ const createMainWin = () => {
       console.log(`[Renderer Console] Message: ${message}`);
     }
   );
-  //cancel-download-app
-  ipcMain.handle("cancel-download-app", (event, arg) => {
-    // Implement cancellation logic here
-    // Note: In this example, we are not keeping a reference to the request,
-    // so we cannot actually abort it. This is a placeholder for demonstration.
-    if (downloadRequest) {
-      downloadRequest.abort();
-      downloadRequest = null;
-    }
-    event.returnValue = "cancelled";
-  });
   // Discord RPC handlers
   ipcMain.handle("discord-rpc-update", async (event, config) => {
     const { bookTitle, author, percentage } = config;
@@ -1040,7 +1044,8 @@ const createMainWin = () => {
       }
     }
   });
-  ipcMain.handle("update-win-app", (event, config) => {
+  // Legacy in-app updater intentionally disabled: no update download handler is registered.
+  if (false) ipcMain.handle("update-win-app", (event, config) => {
     let fileName = `koodo-reader-installer.exe`;
     let supportedArchs = ["x64", "ia32", "arm64"];
     //get system arch
@@ -1939,7 +1944,7 @@ const createMainWin = () => {
     event.returnvalue = false;
   });
   ipcMain.on("storage-location", (event, config) => {
-    event.returnValue = path.join(dirPath, "data");
+    event.returnValue = defaultStoragePath;
   });
   ipcMain.on("url-window-status", (event, config) => {
     if (config.type === "dict") {
@@ -2137,3 +2142,5 @@ const handleCallback = (url) => {
     console.info("Problematic URL:", url);
   }
 };
+
+

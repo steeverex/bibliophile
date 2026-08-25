@@ -85,14 +85,7 @@ class NoteList extends React.Component<NoteListProps, NoteListState> {
       bookNamesMap: this.state.bookNamesMap,
     };
     return (
-      <div
-        className="note-list-container-parent"
-        style={
-          this.props.isCollapsed
-            ? { width: "calc(100vw - 70px)", left: "70px" }
-            : {}
-        }
-      >
+      <div className="note-list-container-parent">
         <div className="note-list-header">
           <div className="note-tags" style={{ width: "calc(100% - 240px)" }}>
             <NoteTag {...({ handleTag: this.handleTag } as any)} />

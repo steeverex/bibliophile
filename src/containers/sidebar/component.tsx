@@ -22,15 +22,21 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
   };
 
   componentDidMount() {
+    this.syncSidebarWidth(this.state.isCollapsed);
     this.props.handleMode(document.URL.split("/").reverse()[0] === "empty" ? "home" : document.URL.split("/").reverse()[0]);
     document.addEventListener("dragend", this.clearDropTarget);
   }
 
   componentWillUnmount() {
+    document.documentElement.classList.remove("sidebar-collapsed");
     document.removeEventListener("dragend", this.clearDropTarget);
   }
 
   clearDropTarget = () => this.setState({ dropTarget: "" });
+
+  syncSidebarWidth = (isCollapsed: boolean) => {
+    document.documentElement.classList.toggle("sidebar-collapsed", isCollapsed);
+  };
 
   handleSidebar = (mode: string) => {
     if (mode === "profile") {
@@ -48,6 +54,7 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
 
   handleCollapse = (isCollapsed: boolean) => {
     this.setState({ isCollapsed });
+    this.syncSidebarWidth(isCollapsed);
     this.props.handleCollapse(isCollapsed);
     ConfigService.setReaderConfig("isCollapsed", isCollapsed ? "yes" : "no");
   };
@@ -95,11 +102,11 @@ class Sidebar extends React.Component<SidebarProps, SidebarState> {
 
   render() {
     return (
-      <div className="sidebar">
+      <div className={`sidebar${this.state.isCollapsed ? " collapsed" : ""}`}>
         <div className="sidebar-list-icon" onClick={() => this.handleCollapse(!this.state.isCollapsed)}>
           <span className="icon-menu sidebar-list" />
         </div>
-        <div className="side-menu-container-parent" style={this.state.isCollapsed ? { width: "70px" } : {}}>
+        <div className="side-menu-container-parent">
           <ul className="side-menu-container">
             {sideMenu.map((item) => {
               const isDropTarget = item.mode === "favorite" || item.mode === "trash";

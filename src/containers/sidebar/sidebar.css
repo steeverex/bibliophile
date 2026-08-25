@@ -1,15 +1,29 @@
-.sidebar {
-  width: 190px;
-  height: 100%;
+:root {
+  --sidebar-expanded-width: 220px;
+  --sidebar-collapsed-width: 70px;
+  --sidebar-width: var(--sidebar-expanded-width);
 }
+
+:root.sidebar-collapsed {
+  --sidebar-width: var(--sidebar-collapsed-width);
+}
+
+.sidebar {
+  width: var(--sidebar-width);
+  height: 100%;
+  overflow: hidden;
+  transition: width 0.25s ease;
+}
+.sidebar.collapsed { width: var(--sidebar-width); }
 
 .side-menu-container-parent {
   position: relative;
   top: 72px;
-  width: 210px;
+  width: 100%;
   height: calc(100% - 120px);
   overflow-x: hidden;
   overflow-y: scroll;
+  transition: width 0.25s ease;
 }
 #sidebar-new-shelf {
   margin-left: 20px;

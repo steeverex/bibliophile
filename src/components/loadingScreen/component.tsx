@@ -132,7 +132,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
           ? EPUB_MESSAGES
           : GENERIC_MESSAGES;
     return shuffle([...base, ...shuffle(GENERIC_MESSAGES).slice(0, 5)]);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // Easter egg: determined once on mount
   const easterEgg = useMemo<string | null>(
@@ -208,7 +208,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
 
     let charTimer = window.setTimeout(typeNextChar, randomBetween(18, 34));
     return () => window.clearTimeout(charTimer);
-  }, [lines.length, isReady]); // re-run each time a line is committed // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lines.length, isReady]); // re-run each time a line is committed
 
   // ── Inter-message delay + syslog injection ───────────────────────────────────
   useEffect(() => {
@@ -241,7 +241,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
       randomBetween(prefersReducedMotion ? 60 : 280, prefersReducedMotion ? 100 : 480)
     );
     return () => window.clearTimeout(nextMessageTimer);
-  }, [lines, isReady]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lines, isReady]);
 
   // ── Easter egg injection (once, ~halfway through) ────────────────────────────
   useEffect(() => {
@@ -252,7 +252,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({
       addLine({ kind: "easter", text: easterEgg });
     }, randomBetween(400, 800));
     return () => window.clearTimeout(t);
-  }, [lines, easterEgg, isReady]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [lines, easterEgg, isReady]);
 
   // ── Indeterminate bar animation ──────────────────────────────────────────────
   useEffect(() => {

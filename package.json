@@ -146,11 +146,6 @@
     "directories": {
       "buildResources": "assets"
     },
-    "publish": {
-      "provider": "github",
-      "repo": "koodo-reader",
-      "owner": "koodo-reader"
-    },
     "buildDependenciesFromSource": false,
     "nodeGypRebuild": false,
     "fileAssociations": [
@@ -272,7 +267,7 @@
           ]
         }
       ],
-      "icon": "C:\\\\Users\\\\tec-e\\\\Downloads\\\\icon.ico",
+      "icon": "assets/icons/bibliophile.ico",
       "artifactName": "${productName}-${version}-${arch}-Win.${ext}"
     },
     "linux": {
@@ -357,3 +352,5 @@
     ]
   }
 }
+
+

@@ -414,14 +414,7 @@ class BookList extends React.Component<BookListProps, BookListState> {
     const { books, bookMode } = this.handleBooks();
     return (
       <>
-        <div
-          className="book-list-header"
-          style={
-            this.props.isCollapsed
-              ? { width: "calc(100% - 70px)", left: "70px" }
-              : {}
-          }
-        >
+        <div className="book-list-header">
           <SelectBook />
 
           <div
@@ -469,14 +462,7 @@ class BookList extends React.Component<BookListProps, BookListState> {
             <ViewMode />
           </div>
         </div>
-        <div
-          className="book-list-container-parent"
-          style={
-            this.props.isCollapsed
-              ? { width: "calc(100vw - 70px)", left: "70px" }
-              : {}
-          }
-        >
+        <div className="book-list-container-parent">
           <div className="book-list-container">
             <ul
               className="book-list-item-box"
