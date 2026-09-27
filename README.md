@@ -1,20 +1,4 @@
-
-
-
-</div>
-
-## Preview
-
-<div align="center">
-  <br/>
-  <br/>
-  <img src="https://dl.koodoreader.com/screenshots/7.png" width="800px">
-  <br/>
-  <br/>
-  <img src="https://dl.koodoreader.com/screenshots/8.png" width="800px">
-  <br/>
-  <br/>
-</div>
+BIBLIOPHILE
 
 ## Features
 
