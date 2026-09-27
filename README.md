@@ -1,24 +1,5 @@
-<div align="left">
 
-[简体中文](./README_cn.md) | [हिंदी](./README_hi.md)
-|[Português](./README_pt.md) | [Indonesian](./README_id.md) | English | [Türkçe](./README_tr.md)
 
-</div>
-
-<div align="center" >
-  <img src="https://dl.koodoreader.com/screenshots/logo.png" width="96px" height="96px"/>
-</div>
-
-<h1 align="center">
-  Koodo Reader
-</h1>
-
-<h3 align="center">
-  A cross-platform ebook reader
-</h3>
-<div align="center">
-
-[Download](https://koodoreader.com/en) | [Preview](https://web.koodoreader.com) | [Roadmap](https://koodoreader.com/en/roadmap) | [Document](https://koodoreader.com/en/document) | [Plugins](https://koodoreader.com/en/plugin)
 
 </div>
 
